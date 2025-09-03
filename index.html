@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriFact Protocol | AI와 집단지성을 결합한 탈중앙화 진실 검증</title>
+    <!-- Chosen Palette: Deep Space Blue (Inspired by user-provided image) -->
+    <!-- Application Structure Plan: Retaining the single-page narrative structure but with a completely new visual theme based on the user's reference. The key change is the introduction of a dynamic canvas background in the hero section to create a high-tech, engaging first impression that aligns with the blockchain/oracle space. The color scheme, typography, and component styling have been overhauled to match the dark, professional aesthetic of the reference image. -->
+    <!-- Visualization & Content Choices: 
+    - Report Info: Hero Section -> Goal: High-tech Engagement -> Viz: Dynamic Particle Canvas with connections & typing animation -> Interaction: Visual -> Justification: Creates an immersive, dynamic feel that highlights key aspects of the protocol -> Library: Custom JS.
+    - Report Info: Problem Section -> Goal: Visual Clarity -> Viz: Replaced SVG icons with 3D illustration icons -> Interaction: None -> Justification: 3D icons provide a more modern and visually rich cue for each problem, enhancing the overall aesthetic -> Library: External Image.
+    - Report Info: 3-Layer Architecture -> Goal: Explain complex structure -> Viz: Sticky scroll-based vertical non-overlapping stacking animation with persistent title and 3D icons -> Interaction: Scroll -> Justification: Creates a "scrollytelling" experience that reveals and stacks each layer sequentially while keeping the context visible, visually representing the architecture's structure -> Library: Custom JS.
+    - Report Info: Process, Tokenomics, Roadmap -> Goal: Enhance engagement -> Viz: Staggered fade-in/slide-in scroll animations -> Interaction: Scroll -> Justification: Adds dynamism to static content sections, making the entire page feel cohesive and interactive -> Library: Custom JS (IntersectionObserver).
+    - Report Info: Token Distribution -> Goal: Show token allocation -> Viz: Doughnut Chart (dark theme) -> Interaction: Hover for tooltips -> Justification: Standard visualization, restyled for the new theme -> Library: Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0A0F1E; /* Deep Blue Background */
+            color: #E2E8F0; /* Light Gray Text */
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .header-bg {
+            background-color: rgba(10, 15, 30, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        #typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 0.9em;
+            background-color: #3B82F6;
+            animation: blink 0.7s infinite;
+            margin-left: 4px;
+            vertical-align: baseline;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-item.animate-on-scroll {
+             transform: translateX(-30px);
+        }
+         .timeline-item.animate-on-scroll.visible {
+             transform: translateX(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #1E293B; /* Slate-800 */
+            border: 4px solid #3B82F6; /* Blue-500 */
+            z-index: 1;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .timeline-item.visible::before {
+            background-color: #3B82F6;
+            transform: scale(1.1);
+        }
+        .layer-card {
+            position: absolute;
+            width: 100%;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="text-slate-300 leading-relaxed">
+
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <a href="#hero" class="text-2xl font-bold text-white">
+                    Veri<span class="text-blue-500">Fact</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#problem" class="text-slate-300 hover:text-white transition">문제점</a>
+                    <a href="#solution" class="text-slate-300 hover:text-white transition">솔루션</a>
+                    <a href="#how-it-works" class="text-slate-300 hover:text-white transition">작동 방식</a>
+                    <a href="#roadmap" class="text-slate-300 hover:text-white transition">로드맵</a>
+                </nav>
+                <a href="#" class="hidden md:block bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold text-sm">Whitepaper</a>
+                <button id="mobile-menu-btn" class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#0A0F1E] border-t border-slate-800">
+            <a href="#problem" class="block py-3 px-4 text-slate-300 hover:bg-slate-800">문제점</a>
+            <a href="#solution" class="block py-3 px-4 text-slate-300 hover:bg-slate-800">솔루션</a>
+            <a href="#how-it-works" class="block py-3 px-4 text-slate-300 hover:bg-slate-800">작동 방식</a>
+            <a href="#roadmap" class="block py-3 px-4 text-slate-300 hover:bg-slate-800">로드맵</a>
+            <div class="p-4">
+                <a href="#" class="block text-center bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Whitepaper</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+            <canvas id="hero-canvas"></canvas>
+            <div class="container mx-auto px-4 z-10">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 h-36 md:h-44">
+                    디지털 시대의 진실을 검증하는 새로운 기준,<br class="hidden md:block">
+                    <span class="text-blue-500">
+                        <span id="typing-text"></span><span id="typing-cursor"></span>
+                    </span>
+                </h1>
+                <p class="max-w-2xl mx-auto text-lg text-slate-400 mb-10">
+                    AI 기술과 집단지성 네트워크를 결합하여 가장 안전하고 신뢰할 수 있는 진실 검증 솔루션을 제공합니다. Verifact는 블록체인의 미래를 위한 데이터 무결성을 보장합니다.
+                </p>
+                <div class="flex justify-center items-center gap-4">
+                    <a href="#solution" class="bg-blue-600 text-white px-7 py-3 rounded-md font-bold hover:bg-blue-700 transition duration-300">프로토콜 시작하기</a>
+                    <a href="#" class="bg-slate-700/50 text-slate-200 px-7 py-3 rounded-md font-bold hover:bg-slate-600/50 transition duration-300 border border-slate-600">커뮤니티 참여</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="problem" class="py-20 md:py-32 bg-[#060914]">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">신뢰의 위기, 우리가 해결하려는 문제</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">디지털 시대는 정보의 폭발적인 증가와 함께 신뢰의 기반을 흔들고 있습니다. 중앙화된 팩트체킹 시스템은 현재의 위기를 해결하기에 역부족입니다.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="animate-on-scroll bg-slate-800/50 p-8 rounded-xl border border-slate-700 flex flex-col items-center">
+                        <img src="https://img.icons8.com/plasticine/100/error.png" alt="정보 과잉 아이콘" class="h-20 w-20 mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/0A0F1E/E2E8F0?text=Icon';">
+                        <h3 class="text-xl font-bold text-white mb-3">정보 과잉과 신뢰 상실</h3>
+                        <p class="text-slate-400">'가짜뉴스'와 조작된 정보가 무분별하게 확산되어 사회적 불신을 증폭시키고 금융 시장에 혼란을 야기합니다.</p>
+                    </div>
+                    <div class="animate-on-scroll bg-slate-800/50 p-8 rounded-xl border border-slate-700 flex flex-col items-center" style="transition-delay: 100ms;">
+                        <img src="https://img.icons8.com/plasticine/100/timer.png" alt="느린 검증 아이콘" class="h-20 w-20 mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/0A0F1E/E2E8F0?text=Icon';">
+                        <h3 class="text-xl font-bold text-white mb-3">느리고 제한적인 검증</h3>
+                        <p class="text-slate-400">기존 팩트체킹 기관의 검증 속도는 실시간으로 퍼지는 허위 정보의 전파 속도를 따라가지 못해 효과적인 대응이 어렵습니다.</p>
+                    </div>
+                    <div class="animate-on-scroll bg-slate-800/50 p-8 rounded-xl border border-slate-700 flex flex-col items-center" style="transition-delay: 200ms;">
+                         <img src="https://img.icons8.com/plasticine/100/visible.png" alt="투명성 문제 아이콘" class="h-20 w-20 mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/0A0F1E/E2E8F0?text=Icon';">
+                        <h3 class="text-xl font-bold text-white mb-3">투명성 및 편향성 문제</h3>
+                        <p class="text-slate-400">중앙화된 기관의 검증 과정은 불투명하며, 특정 주체의 정치적·경제적 편향성에 의해 결과가 왜곡될 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="relative" style="height: 300vh;">
+            <div class="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
+                <div class="container mx-auto px-4 text-center">
+                    <div id="solution-text-container" class="mb-8 transition-opacity duration-500">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white">VeriFact의 3-Layer 아키텍처</h2>
+                        <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">베리팩트는 AI, 블록체인, 그리고 커뮤니티의 힘을 결합한 독자적인 3단계 검증 시스템으로 디지털 신뢰를 새롭게 구축합니다.</p>
+                    </div>
+                    <div id="solution-cards-container" class="relative w-full max-w-3xl mx-auto" style="height: 650px;">
+                        <div id="layer-3" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-6">
+                                <div class="flex-1 text-left">
+                                    <span class="text-sm font-bold text-blue-400">Layer 3</span>
+                                    <h3 class="text-xl font-bold text-white mt-1">Application Layer</h3>
+                                    <p class="text-slate-400 mt-2">사용자가 직접 상호작용하는 웹 dApp과 브라우저 확장 프로그램입니다. 누구나 쉽고 직관적으로 정보 분석을 요청하고 결과를 확인할 수 있습니다.</p>
+                                </div>
+                                <img src="https://img.icons8.com/3d-fluency/94/user-interface.png" alt="Application Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L3';">
+                            </div>
+                        </div>
+                        <div id="layer-2" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                             <div class="flex items-center gap-6">
+                                <div class="flex-1 text-left">
+                                    <span class="text-sm font-bold text-blue-400">Layer 2</span>
+                                    <h3 class="text-xl font-bold text-white mt-1">Protocol Layer</h3>
+                                    <p class="text-slate-400 mt-2">프로토콜의 핵심 두뇌 역할을 수행합니다. 스마트 컨트랙트와 AI 엔진이 유기적으로 작동하여 모든 과정이 투명하고 자동화된 방식으로 실행됩니다.</p>
+                                </div>
+                                <img src="https://img.icons8.com/3d-fluency/94/processor.png" alt="Protocol Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L2';">
+                            </div>
+                        </div>
+                        <div id="layer-1" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                             <div class="flex items-center gap-6">
+                                <div class="flex-1 text-left">
+                                    <span class="text-sm font-bold text-blue-400">Layer 1</span>
+                                    <h3 class="text-xl font-bold text-white mt-1">Community Layer</h3>
+                                    <p class="text-slate-400 mt-2">DAO와 '인간 검증단'이 활동하는 집단지성의 영역입니다. AI의 분석 결과를 교차 검증하여 최종 신뢰도를 극대화합니다.</p>
+                                </div>
+                                <img src="https://img.icons8.com/3d-fluency/94/team.png" alt="Community Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L1';">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="how-it-works" class="py-20 md:py-32 bg-[#060914]">
+            <div class="container mx-auto px-4">
+                 <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">투명하고 신뢰도 높은 검증 프로세스</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">5단계로 구성된 VeriFact의 검증 과정은 모든 단계가 블록체인 위에 투명하게 기록되어 위변조가 불가능합니다.</p>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-5 gap-8 text-center">
+                    <div class="animate-on-scroll">
+                        <div class="text-3xl font-bold text-blue-500 mb-2">01</div>
+                        <h3 class="text-lg font-bold text-white">분석 요청</h3>
+                        <p class="text-slate-400 mt-2 text-sm">사용자가 dApp을 통해 검증을 원하는 정보를 제출합니다.</p>
+                    </div>
+                    <div class="animate-on-scroll" style="transition-delay: 100ms;">
+                        <div class="text-3xl font-bold text-blue-500 mb-2">02</div>
+                        <h3 class="text-lg font-bold text-white">AI 1차 분석</h3>
+                        <p class="text-slate-400 mt-2 text-sm">AI 엔진이 신속하게 1차 분석 결과를 도출합니다.</p>
+                    </div>
+                    <div class="animate-on-scroll" style="transition-delay: 200ms;">
+                        <div class="text-3xl font-bold text-blue-500 mb-2">03</div>
+                        <h3 class="text-lg font-bold text-white">인간 2차 검증</h3>
+                        <p class="text-slate-400 mt-2 text-sm">'인간 검증단'이 AI 분석 결과를 재검토하고 투표합니다.</p>
+                    </div>
+                    <div class="animate-on-scroll" style="transition-delay: 300ms;">
+                        <div class="text-3xl font-bold text-blue-500 mb-2">04</div>
+                        <h3 class="text-lg font-bold text-white">합의 형성</h3>
+                        <p class="text-slate-400 mt-2 text-sm">검증단의 투표 결과가 일정 기준 도달 시 결과가 확정됩니다.</p>
+                    </div>
+                    <div class="animate-on-scroll" style="transition-delay: 400ms;">
+                        <div class="text-3xl font-bold text-blue-500 mb-2">05</div>
+                        <h3 class="text-lg font-bold text-white">기록 및 보상</h3>
+                        <p class="text-slate-400 mt-2 text-sm">최종 결과는 블록체인에 기록되고 기여자에게 보상이 분배됩니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tokenomics" class="py-20 md:py-32">
+            <div class="container mx-auto px-4">
+                 <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">$VF 토큰, 생태계의 중심</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">VeriFact 프로토콜의 유틸리티 토큰인 $VF는 생태계의 성장과 참여자 보상을 위한 핵심적인 역할을 수행합니다.</p>
+                </div>
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="w-full lg:w-1/2">
+                         <div class="chart-container animate-on-scroll relative mx-auto" style="max-width: 400px; height: auto;">
+                            <canvas id="tokenDistributionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <div class="space-y-4">
+                            <div class="animate-on-scroll p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                <h4 class="font-bold text-md text-white">분석 요청 수수료 & 스테이킹</h4>
+                                <p class="text-slate-400 mt-1 text-sm">정보 분석 시 수수료로 사용되며, 스테이킹을 통해 플랫폼 수익을 공유받습니다.</p>
+                            </div>
+                            <div class="animate-on-scroll p-4 bg-slate-800/50 rounded-lg border border-slate-700" style="transition-delay: 100ms;">
+                                <h4 class="font-bold text-md text-white">검증자(Validator) 참여</h4>
+                                <p class="text-slate-400 mt-1 text-sm">인간 검증단이 되기 위한 보증금으로 스테이킹이 요구됩니다.</p>
+                            </div>
+                            <div class="animate-on-scroll p-4 bg-slate-800/50 rounded-lg border border-slate-700" style="transition-delay: 200ms;">
+                                <h4 class="font-bold text-md text-white">거버넌스</h4>
+                                <p class="text-slate-400 mt-1 text-sm">프로토콜의 주요 의사결정에 참여할 수 있는 투표권을 부여합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="py-20 md:py-32 bg-[#060914]">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">미래를 향한 로드맵</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">VeriFact는 명확한 로드맵을 바탕으로 투명하고 지속 가능한 생태계를 구축해 나가고 있습니다.</p>
+                </div>
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute top-0 left-0 h-full w-0.5 bg-slate-700 ml-2"></div>
+                    <div class="space-y-12">
+                        <div class="timeline-item animate-on-scroll pl-12 relative">
+                            <p class="text-blue-400 font-semibold text-sm">Phase 1</p>
+                            <h4 class="text-xl font-bold text-white mt-1">기반 구축</h4>
+                            <p class="text-slate-400 mt-2">핵심 AI 엔진 및 스마트 컨트랙트 개발, 프로토타입 dApp 출시</p>
+                        </div>
+                        <div class="timeline-item animate-on-scroll pl-12 relative" style="transition-delay: 100ms;">
+                            <p class="text-blue-400 font-semibold text-sm">Phase 2</p>
+                            <h4 class="text-xl font-bold text-white mt-1">출시 및 초기 사용자 확보</h4>
+                            <p class="text-slate-400 mt-2">퍼블릭 토큰 세일, 브라우저 확장 프로그램 출시, 초기 거래소 상장</p>
+                        </div>
+                         <div class="timeline-item animate-on-scroll pl-12 relative" style="transition-delay: 200ms;">
+                            <p class="text-blue-400 font-semibold text-sm">Phase 3</p>
+                            <h4 class="text-xl font-bold text-white mt-1">탈중앙화 및 커뮤니티 강화</h4>
+                            <p class="text-slate-400 mt-2">베리팩트 DAO 출범, 스테이킹 시스템 및 커뮤니티 검증단 도입</p>
+                        </div>
+                        <div class="timeline-item animate-on-scroll pl-12 relative" style="transition-delay: 300ms;">
+                            <p class="text-blue-400 font-semibold text-sm">Phase 4</p>
+                            <h4 class="text-xl font-bold text-white mt-1">생태계 확장</h4>
+                            <p class="text-slate-400 mt-2">B2B API 서비스 출시, 크로스체인 확장, VeriFact SDK 공개</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
+                 <div>
+                     <a href="#hero" class="text-xl font-bold text-white">
+                        Veri<span class="text-blue-500">Fact</span>
+                    </a>
+                 </div>
+                 <div class="text-slate-400 text-sm">
+                    &copy; 2025 VeriFact Protocol. All rights reserved.
+                </div>
+                 <div class="flex space-x-6">
+                    <a href="#" class="text-slate-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+                    </a>
+                     <a href="#" class="text-slate-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12,2A10,10,0,0,0,2,12a9.89,9.89,0,0,0,6.48,9.45,1,1,0,0,0,.73-.32,1,1,0,0,0,.26-.71V18.1a.5.5,0,0,1,.24-.44l.2,0a9.2,9.2,0,0,1,1.55-.26,3.61,3.61,0,0,1,2.5,1.06,3.2,3.2,0,0,1,.87,2.41.5.5,0,0,1-.18.42.5.5,0,0,1-.42.18,10,10,0,0,0,5.73-4.2,9.9,9.9,0,0,0,1.08-10A10,10,0,0,0,12,2Zm3.47,13.62a1.22,1.22,0,0,1-1.72,0L12,13.89l-1.75,1.73a1.22,1.22,0,0,1-1.72,0,1.22,1.22,0,0,1,0-1.72L10.27,12,8.55,10.27a1.22,1.22,0,0,1,0-1.72,1.22,1.22,0,0,1,1.72,0L12,10.27l1.73-1.72a1.22,1.22,0,0,1,1.72,0,1.22,1.22,0,0,1,0,1.72L13.73,12l1.74,1.72A1.22,1.22,0,0,1,15.47,15.62Z"></path></svg>
+                    </a>
+                 </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Typing Animation
+            const typingTextElement = document.getElementById('typing-text');
+            const phrases = ["VeriFact Protocol.", "지능형 AI 검증 엔진.", "Collective Intelligence."];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function type() {
+                const currentPhrase = phrases[phraseIndex];
+                let typeSpeed = 120;
+
+                if (isDeleting) {
+                    typeSpeed = 60;
+                    typingTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    typingTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                if (!isDeleting && charIndex === currentPhrase.length) {
+                    typeSpeed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    typeSpeed = 500;
+                }
+                
+                setTimeout(type, typeSpeed);
+            }
+
+            type();
+
+
+            // Particle Canvas Animation
+            const canvas = document.getElementById('hero-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function createParticles() {
+                particles = [];
+                const particleCount = Math.floor(canvas.width * canvas.height / 15000);
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        radius: Math.random() * 1.5 + 0.5,
+                    });
+                }
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fill();
+                });
+
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p1 = particles[i];
+                        const p2 = particles[j];
+                        const distance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                        const connectionThreshold = 120; 
+
+                        if (distance < connectionThreshold) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            
+                            const opacity = 1 - (distance / connectionThreshold);
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${opacity * 0.5})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                createParticles();
+            });
+
+            resizeCanvas();
+            createParticles();
+            animate();
+
+            // Mobile Menu
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a, #header nav a').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // Header Scroll Effect
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('header-bg');
+                } else {
+                    header.classList.remove('header-bg');
+                }
+            });
+
+            // General On-Scroll Animation
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+            animatedElements.forEach(el => observer.observe(el));
+            
+            // Solution Section Scroll Stacking Animation
+            const solutionSection = document.getElementById('solution');
+            const layer1 = document.getElementById('layer-1');
+            const layer2 = document.getElementById('layer-2');
+            const layer3 = document.getElementById('layer-3');
+
+            function handleSolutionScroll() {
+                const rect = solutionSection.getBoundingClientRect();
+                if (rect.bottom < 0 || rect.top > window.innerHeight) {
+                    return;
+                }
+                
+                const scrollableHeight = solutionSection.scrollHeight - window.innerHeight;
+                const scrollAmount = -rect.top;
+                const progress = Math.max(0, Math.min(1, scrollAmount / scrollableHeight));
+
+                const step1 = 0.1;
+                const step2 = 0.4;
+                const step3 = 0.7;
+                
+                const cardOffset = 210; 
+
+                // Layer 3
+                if (progress >= step1) {
+                    layer3.style.opacity = '1';
+                    layer3.style.transform = 'translateY(0px)';
+                } else {
+                    layer3.style.opacity = '0';
+                    layer3.style.transform = 'translateY(20px)';
+                }
+
+                // Layer 2
+                if (progress >= step2) {
+                    layer2.style.opacity = '1';
+                    layer2.style.transform = `translateY(${cardOffset}px)`;
+                } else {
+                    layer2.style.opacity = '0';
+                    layer2.style.transform = `translateY(${cardOffset + 20}px)`;
+                }
+
+                // Layer 1
+                if (progress >= step3) {
+                    layer1.style.opacity = '1';
+                    layer1.style.transform = `translateY(${cardOffset * 2}px)`;
+                } else {
+                    layer1.style.opacity = '0';
+                    layer1.style.transform = `translateY(${cardOffset * 2 + 20}px)`;
+                }
+            }
+
+            window.addEventListener('scroll', handleSolutionScroll);
+            handleSolutionScroll();
+
+
+            // Chart.js Tokenomics Chart
+            const chartContainer = document.querySelector('.chart-container');
+            let tokenChart = null;
+
+            const chartObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !tokenChart) {
+                        const chartCtx = document.getElementById('tokenDistributionChart').getContext('2d');
+                        const tokenDistributionData = {
+                            labels: ['생태계 펀드', '팀 & 어드바이저', '토큰 세일', '마케팅 & 파트너십', '유동성 공급'],
+                            datasets: [{
+                                data: [35, 20, 20, 15, 10],
+                                backgroundColor: [
+                                    '#3B82F6', '#10B981', '#F97316', '#8B5CF6', '#EC4899'
+                                ],
+                                borderColor: '#0A0F1E',
+                                borderWidth: 3,
+                                hoverOffset: 4
+                            }]
+                        };
+
+                        tokenChart = new Chart(chartCtx, {
+                            type: 'doughnut',
+                            data: tokenDistributionData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            color: '#94A3B8',
+                                            font: { size: 12 },
+                                            padding: 15
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: '#1E293B',
+                                        titleFont: { size: 14 },
+                                        bodyFont: { size: 12 },
+                                        padding: 10,
+                                        cornerRadius: 4,
+                                        callbacks: {
+                                            label: context => `${context.label}: ${context.parsed}%`
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: '$VF 토큰 분배',
+                                        color: '#FFFFFF',
+                                        font: { size: 16, weight: 'bold' },
+                                        padding: { bottom: 20 }
+                                    }
+                                },
+                                cutout: '65%'
+                            }
+                        });
+                        chartObserver.unobserve(chartContainer);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            if (chartContainer) {
+                chartObserver.observe(chartContainer);
+            }
+        });
+    </script>
+</body>
+</html>
+
