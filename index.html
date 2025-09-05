@@ -9,7 +9,7 @@
     <!-- Visualization & Content Choices: 
     - Report Info: Hero Section -> Goal: High-tech Engagement -> Viz: Dynamic Particle Canvas with connections & typing animation -> Interaction: Visual -> Justification: Creates an immersive, dynamic feel that highlights key aspects of the protocol -> Library: Custom JS.
     - Report Info: Problem Section -> Goal: Visual Clarity -> Viz: Replaced SVG icons with 3D illustration icons -> Interaction: None -> Justification: 3D icons provide a more modern and visually rich cue for each problem, enhancing the overall aesthetic -> Library: External Image.
-    - Report Info: 3-Layer Architecture -> Goal: Explain complex structure -> Viz: Sticky scroll-based vertical non-overlapping stacking animation with persistent title and 3D icons, now fully responsive -> Interaction: Scroll -> Justification: Creates a "scrollytelling" experience that reveals and stacks each layer sequentially while keeping the context visible, visually representing the architecture's structure -> Library: Custom JS.
+    - Report Info: 3-Layer Architecture -> Goal: Explain complex structure -> Viz: Sticky scroll-based vertical non-overlapping stacking animation with persistent title and 3D icons, now fully responsive with dynamic height calculation -> Interaction: Scroll -> Justification: Creates a "scrollytelling" experience that reveals and stacks each layer sequentially while keeping the context visible, visually representing the architecture's structure -> Library: Custom JS.
     - Report Info: Process, Tokenomics, Roadmap -> Goal: Enhance engagement -> Viz: Staggered fade-in/slide-in scroll animations -> Interaction: Scroll -> Justification: Adds dynamism to static content sections, making the entire page feel cohesive and interactive -> Library: Custom JS (IntersectionObserver).
     - Report Info: Token Distribution -> Goal: Show token allocation -> Viz: Doughnut Chart (dark theme) -> Interaction: Hover for tooltips -> Justification: Standard visualization, restyled for the new theme -> Library: Chart.js. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -486,8 +486,8 @@
 
             function handleSolutionScroll() {
                 const isMobile = window.innerWidth < 768;
-                const cardHeight = isMobile ? 240 : 190;
-                const cardMargin = isMobile ? 20 : 20;
+                const cardHeight = isMobile ? layer3.offsetHeight : 190;
+                const cardMargin = isMobile ? 30 : 20; 
                 
                 cardsContainer.style.height = `${(cardHeight + cardMargin) * 3}px`;
                 const cardOffset = cardHeight + cardMargin;
@@ -534,8 +534,8 @@
             }
 
             window.addEventListener('scroll', handleSolutionScroll);
-            handleSolutionScroll();
-
+            // Use a slight delay for initial calculation to ensure DOM is fully rendered
+            setTimeout(handleSolutionScroll, 100);
 
             // Chart.js Tokenomics Chart
             const chartContainer = document.querySelector('.chart-container');
