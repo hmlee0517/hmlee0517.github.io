@@ -9,7 +9,7 @@
     <!-- Visualization & Content Choices: 
     - Report Info: Hero Section -> Goal: High-tech Engagement -> Viz: Dynamic Particle Canvas with connections & typing animation -> Interaction: Visual -> Justification: Creates an immersive, dynamic feel that highlights key aspects of the protocol -> Library: Custom JS.
     - Report Info: Problem Section -> Goal: Visual Clarity -> Viz: Replaced SVG icons with 3D illustration icons -> Interaction: None -> Justification: 3D icons provide a more modern and visually rich cue for each problem, enhancing the overall aesthetic -> Library: External Image.
-    - Report Info: 3-Layer Architecture -> Goal: Explain complex structure -> Viz: Sticky scroll-based vertical non-overlapping stacking animation with persistent title and 3D icons -> Interaction: Scroll -> Justification: Creates a "scrollytelling" experience that reveals and stacks each layer sequentially while keeping the context visible, visually representing the architecture's structure -> Library: Custom JS.
+    - Report Info: 3-Layer Architecture -> Goal: Explain complex structure -> Viz: Sticky scroll-based vertical non-overlapping stacking animation with persistent title and 3D icons, now fully responsive -> Interaction: Scroll -> Justification: Creates a "scrollytelling" experience that reveals and stacks each layer sequentially while keeping the context visible, visually representing the architecture's structure -> Library: Custom JS.
     - Report Info: Process, Tokenomics, Roadmap -> Goal: Enhance engagement -> Viz: Staggered fade-in/slide-in scroll animations -> Interaction: Scroll -> Justification: Adds dynamism to static content sections, making the entire page feel cohesive and interactive -> Library: Custom JS (IntersectionObserver).
     - Report Info: Token Distribution -> Goal: Show token allocation -> Viz: Doughnut Chart (dark theme) -> Interaction: Hover for tooltips -> Justification: Standard visualization, restyled for the new theme -> Library: Chart.js. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -123,18 +123,18 @@
         <section id="hero" class="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
             <canvas id="hero-canvas"></canvas>
             <div class="container mx-auto px-4 z-10">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 h-36 md:h-44">
-                    디지털 시대의 진실을 검증하는 새로운 기준,<br class="hidden md:block">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 h-56 sm:h-48 md:h-44">
+                    디지털 시대의 진실을 검증하는 새로운 기준,<br>
                     <span class="text-blue-500">
                         <span id="typing-text"></span><span id="typing-cursor"></span>
                     </span>
                 </h1>
-                <p class="max-w-2xl mx-auto text-lg text-slate-400 mb-10">
+                <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-400 mb-10">
                     AI 기술과 집단지성 네트워크를 결합하여 가장 안전하고 신뢰할 수 있는 진실 검증 솔루션을 제공합니다. Verifact는 블록체인의 미래를 위한 데이터 무결성을 보장합니다.
                 </p>
-                <div class="flex justify-center items-center gap-4">
-                    <a href="#solution" class="bg-blue-600 text-white px-7 py-3 rounded-md font-bold hover:bg-blue-700 transition duration-300">프로토콜 시작하기</a>
-                    <a href="#" class="bg-slate-700/50 text-slate-200 px-7 py-3 rounded-md font-bold hover:bg-slate-600/50 transition duration-300 border border-slate-600">커뮤니티 참여</a>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#solution" class="w-full sm:w-auto bg-blue-600 text-white px-7 py-3 rounded-md font-bold hover:bg-blue-700 transition duration-300">프로토콜 시작하기</a>
+                    <a href="#" class="w-full sm:w-auto bg-slate-700/50 text-slate-200 px-7 py-3 rounded-md font-bold hover:bg-slate-600/50 transition duration-300 border border-slate-600">커뮤니티 참여</a>
                 </div>
             </div>
         </section>
@@ -172,35 +172,35 @@
                         <h2 class="text-3xl md:text-4xl font-bold text-white">VeriFact의 3-Layer 아키텍처</h2>
                         <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">베리팩트는 AI, 블록체인, 그리고 커뮤니티의 힘을 결합한 독자적인 3단계 검증 시스템으로 디지털 신뢰를 새롭게 구축합니다.</p>
                     </div>
-                    <div id="solution-cards-container" class="relative w-full max-w-3xl mx-auto" style="height: 650px;">
+                    <div id="solution-cards-container" class="relative w-full max-w-3xl mx-auto">
                         <div id="layer-3" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                            <div class="flex items-center gap-6">
-                                <div class="flex-1 text-left">
+                            <div class="flex flex-col md:flex-row items-center gap-6">
+                                <img src="https://img.icons8.com/3d-fluency/94/user-interface.png" alt="Application Layer Icon" class="w-20 h-20 md:w-24 md:h-24" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L3';">
+                                <div class="flex-1 text-center md:text-left">
                                     <span class="text-sm font-bold text-blue-400">Layer 3</span>
                                     <h3 class="text-xl font-bold text-white mt-1">Application Layer</h3>
-                                    <p class="text-slate-400 mt-2">사용자가 직접 상호작용하는 웹 dApp과 브라우저 확장 프로그램입니다. 누구나 쉽고 직관적으로 정보 분석을 요청하고 결과를 확인할 수 있습니다.</p>
+                                    <p class="text-slate-400 mt-2 text-sm sm:text-base">사용자가 직접 상호작용하는 웹 dApp과 브라우저 확장 프로그램입니다. 누구나 쉽고 직관적으로 정보 분석을 요청하고 결과를 확인할 수 있습니다.</p>
                                 </div>
-                                <img src="https://img.icons8.com/3d-fluency/94/user-interface.png" alt="Application Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L3';">
                             </div>
                         </div>
                         <div id="layer-2" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                             <div class="flex items-center gap-6">
-                                <div class="flex-1 text-left">
+                             <div class="flex flex-col md:flex-row items-center gap-6">
+                                 <img src="https://img.icons8.com/3d-fluency/94/processor.png" alt="Protocol Layer Icon" class="w-20 h-20 md:w-24 md:h-24" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L2';">
+                                <div class="flex-1 text-center md:text-left">
                                     <span class="text-sm font-bold text-blue-400">Layer 2</span>
                                     <h3 class="text-xl font-bold text-white mt-1">Protocol Layer</h3>
-                                    <p class="text-slate-400 mt-2">프로토콜의 핵심 두뇌 역할을 수행합니다. 스마트 컨트랙트와 AI 엔진이 유기적으로 작동하여 모든 과정이 투명하고 자동화된 방식으로 실행됩니다.</p>
+                                    <p class="text-slate-400 mt-2 text-sm sm:text-base">프로토콜의 핵심 두뇌 역할을 수행합니다. 스마트 컨트랙트와 AI 엔진이 유기적으로 작동하여 모든 과정이 투명하고 자동화된 방식으로 실행됩니다.</p>
                                 </div>
-                                <img src="https://img.icons8.com/3d-fluency/94/processor.png" alt="Protocol Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L2';">
                             </div>
                         </div>
                         <div id="layer-1" class="layer-card bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                             <div class="flex items-center gap-6">
-                                <div class="flex-1 text-left">
+                             <div class="flex flex-col md:flex-row items-center gap-6">
+                                 <img src="https://img.icons8.com/3d-fluency/94/team.png" alt="Community Layer Icon" class="w-20 h-20 md:w-24 md:h-24" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L1';">
+                                <div class="flex-1 text-center md:text-left">
                                     <span class="text-sm font-bold text-blue-400">Layer 1</span>
                                     <h3 class="text-xl font-bold text-white mt-1">Community Layer</h3>
-                                    <p class="text-slate-400 mt-2">DAO와 '인간 검증단'이 활동하는 집단지성의 영역입니다. AI의 분석 결과를 교차 검증하여 최종 신뢰도를 극대화합니다.</p>
+                                    <p class="text-slate-400 mt-2 text-sm sm:text-base">DAO와 '인간 검증단'이 활동하는 집단지성의 영역입니다. AI의 분석 결과를 교차 검증하여 최종 신뢰도를 극대화합니다.</p>
                                 </div>
-                                <img src="https://img.icons8.com/3d-fluency/94/team.png" alt="Community Layer Icon" class="w-24 h-24 hidden md:block" onerror="this.onerror=null;this.src='https://placehold.co/94x94/0A0F1E/E2E8F0?text=L1';">
                             </div>
                         </div>
                     </div>
@@ -215,7 +215,7 @@
                     <h2 class="text-3xl md:text-4xl font-bold text-white">투명하고 신뢰도 높은 검증 프로세스</h2>
                     <p class="mt-4 max-w-2xl mx-auto text-slate-400 text-lg">5단계로 구성된 VeriFact의 검증 과정은 모든 단계가 블록체인 위에 투명하게 기록되어 위변조가 불가능합니다.</p>
                 </div>
-                 <div class="grid grid-cols-1 md:grid-cols-5 gap-8 text-center">
+                 <div class="grid grid-cols-1 md:grid-cols-5 gap-y-12 md:gap-x-8 text-center">
                     <div class="animate-on-scroll">
                         <div class="text-3xl font-bold text-blue-500 mb-2">01</div>
                         <h3 class="text-lg font-bold text-white">분석 요청</h3>
@@ -435,10 +435,11 @@
                 
                 requestAnimationFrame(animate);
             }
-
+            
             window.addEventListener('resize', () => {
                 resizeCanvas();
                 createParticles();
+                handleSolutionScroll(); // Recalculate on resize
             });
 
             resizeCanvas();
@@ -481,8 +482,16 @@
             const layer1 = document.getElementById('layer-1');
             const layer2 = document.getElementById('layer-2');
             const layer3 = document.getElementById('layer-3');
+            const cardsContainer = document.getElementById('solution-cards-container');
 
             function handleSolutionScroll() {
+                const isMobile = window.innerWidth < 768;
+                const cardHeight = isMobile ? 240 : 190;
+                const cardMargin = isMobile ? 20 : 20;
+                
+                cardsContainer.style.height = `${(cardHeight + cardMargin) * 3}px`;
+                const cardOffset = cardHeight + cardMargin;
+                
                 const rect = solutionSection.getBoundingClientRect();
                 if (rect.bottom < 0 || rect.top > window.innerHeight) {
                     return;
@@ -495,8 +504,6 @@
                 const step1 = 0.1;
                 const step2 = 0.4;
                 const step3 = 0.7;
-                
-                const cardOffset = 210; 
 
                 // Layer 3
                 if (progress >= step1) {
