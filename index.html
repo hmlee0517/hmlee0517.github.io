@@ -165,7 +165,7 @@
             </div>
         </section>
 
-        <section id="solution" class="relative" style="height: 350vh;">
+        <section id="solution" class="relative" style="height: 400vh;">
             <div class="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
                 <div class="container mx-auto px-4 text-center">
                     <div id="solution-text-container" class="mb-8 transition-opacity duration-500">
@@ -265,7 +265,7 @@
                             </div>
                             <div class="animate-on-scroll p-4 bg-slate-800/50 rounded-lg border border-slate-700" style="transition-delay: 100ms;">
                                 <h4 class="font-bold text-md text-white">검증자(Validator) 참여</h4>
-                                <p class="text-slate-400 mt-1 text-sm">인간 검증단이 되기 위한 보증금으로 스테이킹이 요구됩니다.</p>
+                                <p class="text-slate-400 mt-1 text-sm">인간 검증단이 되기 위한 보증금로 스테이킹이 요구됩니다.</p>
                             </div>
                             <div class="animate-on-scroll p-4 bg-slate-800/50 rounded-lg border border-slate-700" style="transition-delay: 200ms;">
                                 <h4 class="font-bold text-md text-white">거버넌스</h4>
@@ -485,11 +485,11 @@
             const cardsContainer = document.getElementById('solution-cards-container');
 
             function handleSolutionScroll() {
-                const isMobile = window.innerWidth < 768;
                 
                 // Dynamically get card height and set container height
                 const cardHeight = layer3.offsetHeight;
-                const cardMargin = isMobile ? 30 : 20; 
+                const cardMargin = window.innerHeight > 800 ? 30 : (window.innerHeight > 650 ? 20 : 15);
+                
                 cardsContainer.style.height = `${(cardHeight + cardMargin) * 3}px`;
                 const cardOffset = cardHeight + cardMargin;
                 
