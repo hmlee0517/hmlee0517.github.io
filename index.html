@@ -165,7 +165,7 @@
             </div>
         </section>
 
-        <section id="solution" class="relative" style="height: 300vh;">
+        <section id="solution" class="relative" style="height: 350vh;">
             <div class="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
                 <div class="container mx-auto px-4 text-center">
                     <div id="solution-text-container" class="mb-8 transition-opacity duration-500">
@@ -486,9 +486,10 @@
 
             function handleSolutionScroll() {
                 const isMobile = window.innerWidth < 768;
-                const cardHeight = isMobile ? layer3.offsetHeight : 190;
-                const cardMargin = isMobile ? 30 : 20; 
                 
+                // Dynamically get card height and set container height
+                const cardHeight = layer3.offsetHeight;
+                const cardMargin = isMobile ? 30 : 20; 
                 cardsContainer.style.height = `${(cardHeight + cardMargin) * 3}px`;
                 const cardOffset = cardHeight + cardMargin;
                 
